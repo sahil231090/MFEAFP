@@ -192,7 +192,7 @@ def _run_ff_regression(ret_df, mkt_df, ff_df, beta_window=252):
 
 def get_scaled_returns(ticker_list, std_window=252):
     ret_df = get_returns(ticker_list)
-    return _scale_by_rolling_std(ret_df, std_window=252)
+    return _scale_by_rolling_std(ret_df, std_window)
 
 def get_returns_around_date(ticker_list, around_date,
                             days_before=30, days_after=60):
