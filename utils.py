@@ -5,6 +5,7 @@ Created on Wed Feb 15 11:52:43 2017
 @author: sahil.231090
 """
 import os
+import re
 import functools
 import pandas as pd
 from datetime import datetime, timedelta
@@ -46,16 +47,25 @@ def headline_to_svo(text):
 
 def get_comp_df():
     DATE_COL = const.COMP_QUAT_FILE_DATE_COL
+    COPMANY_COL = const.COMP_QUAT_FILE_COMPANY_COL
     df = pd.read_csv(const.COMP_QUAT_FILE)
     df[DATE_COL] = df[DATE_COL].apply(DATEPARSER)
+    df[COPMANY_COL] = df[COPMANY_COL].str.upper().apply(
+                            lambda x: re.sub('[.!,]', '', x))
+    common_words = pd.Series(' '.join(df[COPMANY_COL].unique()
+                                      ).split()
+                            ).value_counts()[:30].index
+    common_words = filter(lambda x: len(x) > 2, common_words)
+    df[COPMANY_COL] = df[COPMANY_COL].replace(common_words, '',
+                                regex=True).apply(str.strip)
     return df
-
+    
 def map_ticker(text, headline_date, comp_df):
     COMPANY_COL = const.COMP_QUAT_FILE_COMPANY_COL
     TICKER_COL = const.COMP_QUAT_FILE_TICKER_COL
     DATE_COL = const.COMP_QUAT_FILE_DATE_COL
-    comps = comp_df[COMPANY_COL].str.upper()
-    name_match = difflib.get_close_matches(text.upper(),
+    comps = comp_df[COMPANY_COL]
+    name_match = difflib.get_close_matches(str(text).upper(),
                                                 list(comps),
                                                 cutoff=0.95)
     if(len(name_match) > 0):
@@ -192,7 +202,7 @@ def _run_ff_regression(ret_df, mkt_df, ff_df, beta_window=252):
 
 def get_scaled_returns(ticker_list, std_window=252):
     ret_df = get_returns(ticker_list)
-    return _scale_by_rolling_std(ret_df, std_window)
+    return _scale_by_rolling_std(ret_df, std_window=252)
 
 def get_returns_around_date(ticker_list, around_date,
                             days_before=30, days_after=60):

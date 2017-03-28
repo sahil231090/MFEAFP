@@ -29,7 +29,7 @@ SECTOR_RETURN_FILE = r'C:\Users\Public\Data\SectorReturns.csv'
 US_TRADING_DAYS_FILE = r'C:\Users\Public\Data\TradingDaysUS.txt'
 
 
-HEADLINE_FILE = r'C:\Users\Public\Data\Headlines\headlines2.csv'
+HEADLINE_FILE = r'C:\Users\Public\Data\Headlines\headlines.csv'
 HEADLINE_FILE_DATE_COL = 'date'
 HEADLINE_FILE_HEADLINE_COL = 'headline'
 HEADLINE_FILE_SEP = '|'
